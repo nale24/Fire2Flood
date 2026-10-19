@@ -1,0 +1,3 @@
+﻿f07904e29cb6ed8060ebdce9999b8ded883baea05029969e9848cfb9b85b1c8f  README.txt
+e9b0c268a90363e015f655ad5cf8526746eb6aefaa3637df71f39106166b4458  USGS runoff-generated postfire debris-flow inventory.xml
+37b9a43175391c56b3ce54351fe329bc80eee4d1d0f9bbe787519d8e47b68494  USGS_RG_PFDF_Inventory_v1.csv
