@@ -1,0 +1,81 @@
+FireName,year,state,assessment_id,records,debris_flows,storm_dates,eligible_records,eligible_pos,missing_I15,eligible_neg,usable
+Thomas,2017,CA,thm2017,857,171,1,857,171,0,686,True
+Dolan,2020,CA,dln2020,118,41,3,118,41,0,77,True
+Grizzly Creek,2020,CO,grz2020,2450,50,106,1426,40,830,1386,True
+Buzzard,2018,NM,bzz2018,679,26,72,679,26,0,653,True
+Ferguson,2018,CA,frg2018,366,28,53,364,26,2,338,True
+Cameron Peak,2020,CO,cmp2020,31,21,8,30,20,0,10,True
+Cub Creek 2,2021,WA,cub2021,110,19,3,95,18,0,77,True
+Tadpole,2020,NM,tad2020,648,16,86,648,16,0,632,True
+East Fork,2020,UT,efk2020,28,19,5,23,15,0,8,True
+El Dorado,2020,CA,aed2020,24,15,7,24,15,0,9,True
+Elk,2024,WY,elk2024,180,15,15,180,15,0,165,True
+Hermits Peak - Calf Canyon,2022,NM,her2022,168,15,75,162,15,0,147,True
+Pinal,2017,AZ,pin2017,525,14,69,525,14,0,511,True
+East Troublesome,2020,CO,etr2020,66,11,24,64,11,0,53,True
+Woodbury,2019,AZ,wdb2019,26,22,1,13,11,0,2,True
+Carmel,2020,CA,crm2020,11,10,1,11,10,0,1,True
+Butte,2015,CA,btt2015,123,7,16,123,7,0,116,True
+Cedar Creek,2021,WA,ced2021,21,7,5,21,7,0,14,True
+Fish (San Gabriel Complex),2016,CA,sgc2016,241,7,127,241,7,0,234,True
+Museum,2019,AZ,msm2019,8,7,8,8,7,0,1,True
+River,2020,CA,rvr2020,8,7,1,8,7,0,1,True
+Briceburg,2019,CA,bri2019,84,3,28,84,3,0,81,True
+Dixie,2021,CA,dix2021,22,3,3,22,3,0,19,True
+Muckamuck,2021,WA,mck2021,25,3,1,25,3,0,22,True
+Tamarack,2021,CA,tam2021,5,3,2,5,3,0,2,True
+Boot,2018,CA,bot2018,3,2,3,3,2,0,1,True
+Flag,2021,AZ,flg2021,40,2,34,40,2,0,38,True
+Silverado,2014,CA,slv2014,5,2,5,5,2,0,3,True
+CZU Lightning Complex,2020,CA,czu2020,24,1,1,24,1,0,23,True
+McBride,2022,NM,mcb2022,11,1,5,11,1,0,10,True
+Spring Creek,2018,CO,spg2018,2,1,2,2,1,0,1,True
+Bond,2020,CA,bon2020,9,9,4,9,9,0,0,False
+Easy,2024,WA,eas2024,3,3,1,3,3,0,0,False
+Apple,2020,CA,aed2020,2,2,2,1,1,1,0,False
+Bear,2021,UT,ber2021,1,1,1,1,1,0,0,False
+Mosquito,2022,CA,mos2022,1,1,1,1,1,0,0,False
+Pipeline,2022,AZ,pln2022,1,1,1,1,1,0,0,False
+Blaisdell,2005,CA,bla,10,0,2,0,0,0,0,False
+Buckweed,2007,CA,bck,16,0,1,0,0,0,0,False
+Calwood,2020,CO,cal2020,158,0,112,158,0,0,158,False
+Canyon,2007,CA,can2007,14,0,3,0,0,2,0,False
+Carr,2018,CA,crr2018,1,0,1,1,0,0,1,False
+Cerro Grande,2000,NM,cg,11,5,1,0,0,0,0,False
+Coal Seam,2002,CO,cs,253,17,8,0,0,108,0,False
+Day,2006,CA,day,8,0,4,0,0,0,0,False
+El Portal,2014,CA,elp2014,2,2,1,0,0,2,0,False
+Freeway Complex,2008,CA,fwy,8,0,1,0,0,0,0,False
+Fridley,2001,MT,fri,11,5,1,0,0,0,0,False
+Gap,2008,CA,gap,10,0,3,0,0,0,0,False
+Gladiator,2012,AZ,gld,35,3,4,0,0,0,0,False
+Grand Prix - Old,2003,CA,gpo,78,60,2,0,0,0,0,False
+Harris,2007,CA,har,10,0,3,0,0,5,0,False
+Harvard,2005,CA,hrv,28,6,4,0,0,0,0,False
+Horse,2006,CA,hrs,9,0,4,0,0,0,0,False
+Horseshoe 2,2011,AZ,hsh2011,30,4,6,0,0,0,0,False
+Jesusita,2009,CA,jes,6,0,4,0,0,0,0,False
+Lake,2020,CA,lak2020,11,0,1,10,0,0,10,False
+Little Bear,2012,NM,lb,47,30,5,0,0,0,0,False
+Medano,2010,CO,med2010,100,10,32,0,0,0,0,False
+Missionary Ridge,2002,CO,mr,16,11,8,0,0,0,0,False
+Mollie,2001,UT,mol,4,4,1,0,0,0,0,False
+Monument,2011,AZ,mmt,19,6,4,0,0,0,0,False
+Motor,2011,CA,mtr2011,5,5,3,0,0,5,0,False
+Poomacha,2007,CA,poo,21,19,3,0,0,0,0,False
+Purdy Creek,2001,MT,pur,9,0,1,0,0,0,0,False
+Record,2024,CA,,2,2,1,0,0,0,0,False
+Red Apple,2021,WA,red2021,1,0,1,1,0,0,1,False
+Santiago,2007,CA,san,12,5,1,0,0,0,0,False
+Sayre,2008,CA,say,14,2,4,0,0,0,0,False
+School,2005,CA,sch,12,0,4,0,0,0,0,False
+Schultz,2010,AZ,sch2010,109,30,6,0,0,0,0,False
+Station,2009,CA,stn,489,108,13,0,0,0,0,False
+Sula Complex (Maynard),2000,MT,sul,6,2,1,0,0,0,0,False
+Topanga,2005,CA,top,33,0,3,0,0,0,0,False
+Valley,2015,CA,vly2015,119,0,10,117,0,0,117,False
+Valley Complex (Bear),2000,MT,br,14,11,1,0,0,0,0,False
+Waldo Canyon,2012,CO,wal,31,7,4,0,0,0,0,False
+Wallow,2011,AZ,wlw,20,2,4,0,0,0,0,False
+Whitewater-Baldy,2012,NM,wwb2012,217,217,4,0,0,81,0,False
+Witch,2007,CA,wit,46,1,6,0,0,0,0,False
