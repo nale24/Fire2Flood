@@ -1,6 +1,5 @@
 import json
 import shutil
-from importlib import import_module
 from pathlib import Path
 
 import geopandas as gpd
@@ -13,6 +12,7 @@ from rasterio.windows import Window
 
 import config as C
 from common import clear_mask, ensure_dirs, selected
+from select_scenes import fire_basins
 
 
 def cut_one(band_paths, fmask_path, geom_4326, lon, lat):
@@ -90,8 +90,6 @@ def build_event_table(cm):
 
 def main():
     import earthaccess
-
-    fire_basins = import_module("03_select_scenes").fire_basins
 
     earthaccess.login(persist=True)
     ensure_dirs()

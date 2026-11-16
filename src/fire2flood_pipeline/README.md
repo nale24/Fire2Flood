@@ -14,22 +14,22 @@ Place `USGS_RG_PFDF_Inventory_v1.csv` in `data/raw/`. Steps 03–04 require a NA
 
 | Script | Output (in `data/processed/`) |
 |---|---|
-| `01_clean_inventory.py` | `inventory_clean.parquet`, `fire_summary.csv` |
-| `00_download_assessments.py` | basin shapefiles in `data/raw/assessments/<AssessmentFireID>/` |
-| `02_join_basins.py` | `basins.gpkg`, `join_report.csv` |
-| `03_select_scenes.py` | `scene_manifest.parquet`, `basin_clear.parquet` |
-| `04_cut_chips.py` | `chips/<fire>/<segment>_<pre\|post>.npz`, `chip_manifest.parquet`, `event_table.parquet` |
-| `05_freeze_splits.py` | `splits.json`, `split_summary.csv` |
+| `clean_inventory.py` | `inventory_clean.parquet`, `fire_summary.csv` |
+| `download_assessments.py` | basin shapefiles in `data/raw/assessments/<AssessmentFireID>/` |
+| `join_basins.py` | `basins.gpkg`, `join_report.csv` |
+| `select_scenes.py` | `scene_manifest.parquet`, `basin_clear.parquet` |
+| `cut_chips.py` | `chips/<fire>/<segment>_<pre\|post>.npz`, `chip_manifest.parquet`, `event_table.parquet` |
+| `freeze_splits.py` | `splits.json`, `split_summary.csv` |
 
 ## Run
 
 ```
 python src/fire2flood_pipeline/run_pipeline.py --fires thomas dolan grizzly_creek
 python src/fire2flood_pipeline/run_pipeline.py
-python src/fire2flood_pipeline/05_freeze_splits.py
+python src/fire2flood_pipeline/freeze_splits.py
 ```
 
-`--from` and `--to` select a range of steps (`clean`, `download`, `join`, `scenes`, `chips`). `05_freeze_splits.py` refuses to overwrite an existing `splits.json` unless `--overwrite` is passed.
+`--from` and `--to` select a range of steps (`clean`, `download`, `join`, `scenes`, `chips`). `freeze_splits.py` refuses to overwrite an existing `splits.json` unless `--overwrite` is passed.
 
 ## Test
 

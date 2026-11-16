@@ -1,18 +1,18 @@
 import argparse
 import sys
-from importlib import import_module
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import config as C
+import clean_inventory, cut_chips, download_assessments, join_basins, select_scenes
 
 STEPS = [
-    ("clean", "01_clean_inventory"),
-    ("download", "00_download_assessments"),
-    ("join", "02_join_basins"),
-    ("scenes", "03_select_scenes"),
-    ("chips", "04_cut_chips"),
+    ("clean", clean_inventory),
+    ("download", download_assessments),
+    ("join", join_basins),
+    ("scenes", select_scenes),
+    ("chips", cut_chips),
 ]
 
 
@@ -28,9 +28,8 @@ def main():
 
     i, j = names.index(args.start), names.index(args.end)
     for name, module in STEPS[i : j + 1]:
-        print(f"\n=== {name} ({module}) ===")
-        mod = import_module(module)
-        mod.main([]) if name == "download" else mod.main()
+        print(f"\n=== {name} ({module.__name__}) ===")
+        module.main([]) if name == "download" else module.main()
 
 
 if __name__ == "__main__":

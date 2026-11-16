@@ -57,7 +57,7 @@ def main():
         print(f"{aid}: matched {len(m)}/{len(segs)} basins from {note}")
 
     if not parts:
-        raise SystemExit("No basins joined. Run 00_download_assessments.py first.")
+        raise SystemExit("No basins joined. Run download_assessments.py first.")
     gdf = gpd.GeoDataFrame(pd.concat(parts, ignore_index=True), geometry="geometry", crs="EPSG:4326")
     gdf["poly_area_km2"] = gdf.to_crs(EQUAL_AREA).area / 1e6
     gdf["area_ratio"] = gdf["poly_area_km2"] / gdf["basin_area_km2"]

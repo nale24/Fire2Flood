@@ -81,7 +81,7 @@ def make_assessment_zips(polys):
 
 
 def test_download_extraction(zips):
-    dl = step("00_download_assessments")
+    dl = step("download_assessments")
     for aid, zpath in zips.items():
         files = dl.extract_basins(zpath, C.ASSESSMENT_DIR / aid)
         shps = [p.name for p in files if p.suffix == ".shp"]
@@ -121,19 +121,19 @@ def main():
     polys = make_inventory()
     test_download_extraction(make_assessment_zips(polys))
 
-    step("01_clean_inventory").main()
+    step("clean_inventory").main()
     inv = pd.read_parquet(C.OUT_DIR / "inventory_clean.parquet")
     assert inv.ignition.notna().all() and inv.storm_start.notna().all(), "yyyymmdd dates not parsed"
     assert not inv[inv.assessment_id == "f002015"].cohort_image_candidate.any(), "pre-HLS fire in image cohort"
     assert not inv[(inv.fire_key == "fire_7") & (inv.days_since_fire < 11)].cohort_image_candidate.any()
     assert not inv[inv.segment_id.str.endswith("_12")].cohort_tabular.any(), "text -9999 not treated as missing"
 
-    step("02_join_basins").main()
+    step("join_basins").main()
     basins = gpd.read_file(C.OUT_DIR / "basins.gpkg")
     assert basins.area_ok.all(), "area check failed"
     assert basins.crs.to_epsg() == 4326
 
-    s3, s4 = step("03_select_scenes"), step("04_cut_chips")
+    s3, s4 = step("select_scenes"), step("cut_chips")
     cand = inv[inv.cohort_image_candidate]
     fb_all = s3.fire_basins(cand, basins)
     records = []
@@ -162,7 +162,7 @@ def main():
     assert not ev[ev.segment_id.str.endswith("_1") & (ev.segment_id.str.count("_") == 1)].cohort_image.any(), \
         "cloudy basin in image cohort"
 
-    s5 = step("05_freeze_splits")
+    s5 = step("freeze_splits")
     s5.main([])
     sp = json.loads((C.OUT_DIR / "splits.json").read_text())
     groups = sum(sp["outer_folds"].values(), [])
