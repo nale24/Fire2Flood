@@ -1,0 +1,187 @@
+{
+  "seed": 2026,
+  "frozen_on": "2026-11-21T00:35",
+  "group_by": "assessment_id, merged when two assessments share a rain gage and storm date",
+  "dev_groups": [
+    "bot2018",
+    "rvr2020"
+  ],
+  "outer_folds": {
+    "fold_0": [
+      "btt2015",
+      "bzz2018",
+      "ced2021",
+      "dix2021",
+      "elk2024",
+      "etr2020",
+      "msm2019",
+      "tam2021",
+      "wdb2019"
+    ],
+    "fold_1": [
+      "bri2019",
+      "cub2021",
+      "dln2020",
+      "sgc2016",
+      "tad2020"
+    ],
+    "fold_2": [
+      "aed2020",
+      "bon2020",
+      "cmp2020",
+      "eas2024",
+      "grz2020",
+      "mos2022"
+    ],
+    "fold_3": [
+      "ber2021",
+      "crm2020",
+      "czu2020",
+      "efk2020",
+      "flg2021",
+      "frg2018",
+      "her2022",
+      "mcb2022",
+      "mck2021",
+      "pin2017",
+      "pln2022",
+      "slv2014",
+      "spg2018"
+    ],
+    "fold_4": [
+      "cal2020",
+      "crr2018",
+      "lak2020",
+      "red2021",
+      "thm2017",
+      "vly2015"
+    ]
+  },
+  "dominant_group": "thm2017",
+  "group_members": {
+    "aed2020": [
+      "apple",
+      "el_dorado"
+    ],
+    "ber2021": [
+      "bear"
+    ],
+    "bon2020": [
+      "bond"
+    ],
+    "bot2018": [
+      "boot"
+    ],
+    "bri2019": [
+      "briceburg"
+    ],
+    "btt2015": [
+      "butte"
+    ],
+    "bzz2018": [
+      "buzzard"
+    ],
+    "cal2020": [
+      "calwood"
+    ],
+    "ced2021": [
+      "cedar_creek"
+    ],
+    "cmp2020": [
+      "cameron_peak"
+    ],
+    "crm2020": [
+      "carmel"
+    ],
+    "crr2018": [
+      "carr"
+    ],
+    "cub2021": [
+      "cub_creek_2"
+    ],
+    "czu2020": [
+      "czu_lightning_complex"
+    ],
+    "dix2021": [
+      "dixie"
+    ],
+    "dln2020": [
+      "dolan"
+    ],
+    "eas2024": [
+      "easy"
+    ],
+    "efk2020": [
+      "east_fork"
+    ],
+    "elk2024": [
+      "elk"
+    ],
+    "etr2020": [
+      "east_troublesome"
+    ],
+    "flg2021": [
+      "flag"
+    ],
+    "frg2018": [
+      "ferguson"
+    ],
+    "grz2020": [
+      "grizzly_creek"
+    ],
+    "her2022": [
+      "hermits_peak_calf_canyon"
+    ],
+    "lak2020": [
+      "lake"
+    ],
+    "mcb2022": [
+      "mcbride"
+    ],
+    "mck2021": [
+      "muckamuck"
+    ],
+    "mos2022": [
+      "mosquito"
+    ],
+    "msm2019": [
+      "museum"
+    ],
+    "pin2017": [
+      "pinal"
+    ],
+    "pln2022": [
+      "pipeline"
+    ],
+    "red2021": [
+      "red_apple"
+    ],
+    "rvr2020": [
+      "river"
+    ],
+    "sgc2016": [
+      "fish_san_gabriel_complex"
+    ],
+    "slv2014": [
+      "silverado"
+    ],
+    "spg2018": [
+      "spring_creek"
+    ],
+    "tad2020": [
+      "tadpole"
+    ],
+    "tam2021": [
+      "tamarack"
+    ],
+    "thm2017": [
+      "thomas"
+    ],
+    "vly2015": [
+      "valley"
+    ],
+    "wdb2019": [
+      "woodbury"
+    ]
+  }
+}
