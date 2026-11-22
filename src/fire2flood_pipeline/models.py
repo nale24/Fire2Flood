@@ -1,16 +1,22 @@
+from functools import partial
+
 import numpy as np
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import PCA
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV, GroupKFold
 from sklearn.pipeline import Pipeline
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
 
 import config as C
 
-LOGISTIC_GRID = {"clf__C": [0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 1.0, 10.0]}
-GBM_GRID = {"clf__max_depth": [2, 3], "clf__learning_rate": [0.03, 0.1], "clf__max_iter": [100, 300]}
+HEADS = {
+    "logistic": (lambda: [("scale", StandardScaler()), ("clf", LogisticRegression(max_iter=3000))],
+                 {"clf__C": [0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 1.0, 10.0]}),
+    "gbm": (lambda: [("clf", HistGradientBoostingClassifier(random_state=C.RANDOM_SEED, l2_regularization=1.0))],
+            {"clf__max_depth": [2, 3], "clf__learning_rate": [0.03, 0.1], "clf__max_iter": [100, 300]}),
+}
 
 
 class BlockPCA(BaseEstimator, TransformerMixin):
@@ -30,16 +36,13 @@ class BlockPCA(BaseEstimator, TransformerMixin):
 
 
 def make_search(head, groups, n_tab=None, n_pca=0):
-    steps = []
-    if n_pca and n_tab is not None:
-        steps.append(("pca", BlockPCA(n_tab, n_pca)))
-    if head == "logistic":
-        steps += [("scale", StandardScaler()), ("clf", LogisticRegression(max_iter=3000))]
-        grid = LOGISTIC_GRID
-    elif head == "gbm":
-        steps += [("clf", HistGradientBoostingClassifier(random_state=C.RANDOM_SEED, l2_regularization=1.0))]
-        grid = GBM_GRID
-    else:
+    if head not in HEADS:
         raise SystemExit(f"unknown head {head}")
-    n_inner = min(5, len(np.unique(groups)))
-    return GridSearchCV(Pipeline(steps), grid, scoring="neg_log_loss", cv=GroupKFold(n_splits=n_inner), n_jobs=-1)
+    steps, grid = HEADS[head]
+    pca = [("pca", BlockPCA(n_tab, n_pca))] if n_pca and n_tab is not None else []
+    cv = GroupKFold(n_splits=min(5, len(np.unique(groups))))
+    return GridSearchCV(Pipeline(pca + steps()), grid, scoring="neg_log_loss", cv=cv, n_jobs=-1)
+
+
+def searcher(head, **kw):
+    return partial(make_search, head, **kw)

@@ -11,47 +11,42 @@ from common import basin_file_rank, ensure_dirs, find_basin_shapefiles, load_inv
 SIDECARS = (".shp", ".shx", ".dbf", ".prj", ".cpg")
 
 
+def get_json(session, url, params=None):
+    r = session.get(url, params=params, timeout=120)
+    r.raise_for_status()
+    return r.json()
+
+
 def list_children(session, parent_id):
-    url = f"{C.SCIENCEBASE_URL}/items"
+    url, items = f"{C.SCIENCEBASE_URL}/items", []
     params = {"parentId": parent_id, "format": "json", "fields": "title,files,hasChildren", "max": 1000}
-    items = []
     while url:
-        r = session.get(url, params=params, timeout=120)
-        r.raise_for_status()
-        data = r.json()
+        data = get_json(session, url, params)
         items += data.get("items", [])
-        url = (data.get("nextlink") or {}).get("url")
-        params = None
+        url, params = (data.get("nextlink") or {}).get("url"), None
     return items
 
 
 def item_files(session, item):
     if "files" in item:
         return item["files"] or []
-    r = session.get(f"{C.SCIENCEBASE_URL}/item/{item['id']}", params={"format": "json"}, timeout=120)
-    r.raise_for_status()
-    return r.json().get("files", []) or []
+    return get_json(session, f"{C.SCIENCEBASE_URL}/item/{item['id']}", {"format": "json"}).get("files", []) or []
+
+
+def matches(aid, title, name):
+    return name.lower().endswith(f"_{aid.lower()}.zip") or (f"({aid})" in title and name.lower() == "shapefiles.zip")
 
 
 def build_index(session, wanted):
-    index = {}
-    stack = list(C.SCIENCEBASE_PARENTS.values())
-    while stack:
+    index, stack = {}, list(C.SCIENCEBASE_PARENTS.values())
+    while stack and len(index) < len(wanted):
         for item in list_children(session, stack.pop()):
-            title = item.get("title", "")
             for f in item_files(session, item):
-                name = f.get("name", "")
                 for aid in wanted:
-                    if aid in index:
-                        continue
-                    if name.lower().endswith(f"_{aid.lower()}.zip"):
-                        index[aid] = f
-                    elif f"({aid})" in title and name.lower() == "shapefiles.zip":
+                    if aid not in index and matches(aid, item.get("title", ""), f.get("name", "")):
                         index[aid] = f
             if item.get("hasChildren"):
                 stack.append(item["id"])
-        if len(index) == len(wanted):
-            break
     return index
 
 
@@ -67,32 +62,31 @@ def pick_members(names):
     return [n for n in names if n.lower().endswith(SIDECARS) and n[: n.rfind(".")].lower() in stems]
 
 
+def copy_member(z, name, target):
+    with z.open(name) as src, open(target, "wb") as dst:
+        shutil.copyfileobj(src, dst)
+    return target
+
+
 def extract_basins(zip_path, out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
     extracted = []
     with zipfile.ZipFile(zip_path) as z:
         names = z.namelist()
         members = pick_members(names)
-        for inner in [n for n in names if n.lower().endswith(".zip")] if not members else []:
-            nested = out_dir / Path(inner).name
-            with z.open(inner) as src, open(nested, "wb") as dst:
-                shutil.copyfileobj(src, dst)
+        for inner in [] if members else [n for n in names if n.lower().endswith(".zip")]:
+            nested = copy_member(z, inner, out_dir / Path(inner).name)
             extracted += extract_basins(nested, out_dir)
             nested.unlink()
-        for m in members:
-            target = out_dir / Path(m).name
-            with z.open(m) as src, open(target, "wb") as dst:
-                shutil.copyfileobj(src, dst)
-            extracted.append(target)
+        extracted += [copy_member(z, m, out_dir / Path(m).name) for m in members]
     return extracted
 
 
 def download(session, url, path):
-    with session.get(url, stream=True, timeout=600) as r:
+    with session.get(url, stream=True, timeout=600) as r, open(path, "wb") as f:
         r.raise_for_status()
-        with open(path, "wb") as f:
-            for chunk in r.iter_content(1 << 20):
-                f.write(chunk)
+        for chunk in r.iter_content(1 << 20):
+            f.write(chunk)
 
 
 def main(argv=None):
@@ -100,34 +94,27 @@ def main(argv=None):
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args(argv)
-
     ensure_dirs()
     inv = selected(load_inventory())
-    pool = inv if args.all else inv[inv["cohort_image_candidate"]]
-    wanted = sorted(pool["assessment_id"].dropna().unique())
+    wanted = sorted((inv if args.all else inv[inv["cohort_image_candidate"]])["assessment_id"].dropna().unique())
     todo = [a for a in wanted if args.force or not find_basin_shapefiles(a)]
     print(f"{len(wanted)} assessments needed, {len(wanted) - len(todo)} already on disk")
     if not todo:
         return
-
     session = requests.Session()
     index = build_index(session, todo)
     for aid in todo:
-        f = index.get(aid)
-        if f is None:
+        if (f := index.get(aid)) is None:
             print(f"{aid}: not found on ScienceBase")
             continue
-        out_dir = C.ASSESSMENT_DIR / aid
-        zip_path = out_dir / f["name"]
-        out_dir.mkdir(parents=True, exist_ok=True)
+        zip_path = C.ASSESSMENT_DIR / aid / f["name"]
+        zip_path.parent.mkdir(parents=True, exist_ok=True)
         print(f"{aid}: downloading {f['name']} ({f.get('size', 0) / 1e6:.1f} MB)")
         download(session, f["url"], zip_path)
-        files = extract_basins(zip_path, out_dir)
+        files = extract_basins(zip_path, zip_path.parent)
         zip_path.unlink()
         print(f"{aid}: extracted {[p.name for p in files if p.suffix == '.shp']}")
-
-    missing = [a for a in wanted if not find_basin_shapefiles(a)]
-    if missing:
+    if missing := [a for a in wanted if not find_basin_shapefiles(a)]:
         print(f"\nStill missing basin files for: {missing}")
 
 
