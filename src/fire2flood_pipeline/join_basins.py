@@ -1,3 +1,4 @@
+import numpy as np
 import geopandas as gpd
 import pandas as pd
 
@@ -38,42 +39,75 @@ def load_basins(assessment_id, wanted_segments):
     return gdf, f"{path.name} [{name}]"
 
 
-def main():
-    ensure_dirs()
-    inv = pd.read_parquet(C.OUT_DIR / "inventory_clean.parquet")
-    inv = selected(inv[inv["cohort_image_candidate"]])
-
+def polygon_basins(segs):
     parts, report = [], []
-    for aid, grp in inv.groupby("assessment_id"):
-        segs = grp.drop_duplicates("segment_id")[["assessment_id", "segment_id", "basin_area_km2"]]
-        basins, note = load_basins(aid, set(segs["segment_id"]))
-        if basins is None:
-            report.append(dict(assessment_id=aid, basins=len(segs), matched=0, source=note))
-            print(f"{aid}: skipped ({note})")
-            continue
-        m = segs.merge(basins, on=["assessment_id", "segment_id"], how="inner")
-        parts.append(m)
-        report.append(dict(assessment_id=aid, basins=len(segs), matched=len(m), source=note))
-        print(f"{aid}: matched {len(m)}/{len(segs)} basins from {note}")
-
+    for aid, grp in segs.groupby("assessment_id"):
+        basins, note = load_basins(aid, set(grp["segment_id"]))
+        matched = 0
+        if basins is not None:
+            m = grp[["assessment_id", "segment_id", "basin_area_km2"]].merge(
+                basins, on=["assessment_id", "segment_id"], how="inner"
+            )
+            parts.append(m)
+            matched = len(m)
+        report.append(dict(assessment_id=aid, basins=len(grp), polygon_matched=matched, source=note))
+        print(f"{aid}: {matched}/{len(grp)} polygons from {note}")
     if not parts:
-        raise SystemExit("No basins joined. Run download_assessments.py first.")
+        return gpd.GeoDataFrame(columns=["assessment_id", "segment_id", "basin_area_km2", "geometry"],
+                                geometry="geometry", crs="EPSG:4326"), pd.DataFrame(report)
     gdf = gpd.GeoDataFrame(pd.concat(parts, ignore_index=True), geometry="geometry", crs="EPSG:4326")
     gdf["poly_area_km2"] = gdf.to_crs(EQUAL_AREA).area / 1e6
     gdf["area_ratio"] = gdf["poly_area_km2"] / gdf["basin_area_km2"]
     gdf["area_ok"] = gdf["area_ratio"].between(*C.AREA_RATIO_RANGE)
     pts = gdf.to_crs(EQUAL_AREA).geometry.representative_point().to_crs("EPSG:4326")
     gdf["lon"], gdf["lat"] = pts.x.values, pts.y.values
+    gdf["mask_source"] = "polygon"
+    return gdf, pd.DataFrame(report)
+
+
+def proxy_basins(segs):
+    pts = gpd.GeoSeries(gpd.points_from_xy(segs["obs_lon"], segs["obs_lat"]), crs="EPSG:4326", index=segs.index)
+    radius = np.maximum(C.PROXY_MIN_RADIUS_M, np.sqrt(segs["basin_area_km2"].fillna(0) * 1e6 / np.pi))
+    circles = pts.to_crs(EQUAL_AREA).buffer(radius.values, resolution=16).to_crs("EPSG:4326")
+    out = gpd.GeoDataFrame(segs[["assessment_id", "segment_id", "basin_area_km2"]].copy(), geometry=circles.values,
+                           crs="EPSG:4326")
+    out["lon"], out["lat"] = segs["obs_lon"].values, segs["obs_lat"].values
+    out["mask_source"] = "proxy"
+    return out
+
+
+def main():
+    ensure_dirs()
+    inv = pd.read_parquet(C.OUT_DIR / "inventory_clean.parquet")
+    inv = selected(inv[inv["cohort_image_candidate"]])
+    has_obs = C.OBS_LAT_COL in inv.columns and C.OBS_LON_COL in inv.columns
+    cols = ["assessment_id", "segment_id", "basin_area_km2"] + ([C.OBS_LAT_COL, C.OBS_LON_COL] if has_obs else [])
+    segs = inv[cols].drop_duplicates("segment_id").rename(columns={C.OBS_LAT_COL: "obs_lat", C.OBS_LON_COL: "obs_lon"})
+
+    poly, report = polygon_basins(segs)
+    good = poly[poly["area_ok"]] if len(poly) else poly
+    rest = segs[~segs["segment_id"].isin(good["segment_id"])]
+    if has_obs:
+        rest = rest.dropna(subset=["obs_lat", "obs_lon"])
+        proxy = proxy_basins(rest) if len(rest) else None
+    else:
+        proxy = None
+    gdf = gpd.GeoDataFrame(pd.concat([good] + ([proxy] if proxy is not None else []), ignore_index=True),
+                           geometry="geometry", crs="EPSG:4326")
+    if gdf.empty:
+        raise SystemExit("No basins built. Run download_assessments.py first, or check the observation coordinates.")
     gdf.to_file(C.OUT_DIR / "basins.gpkg", driver="GPKG")
 
-    rep = pd.DataFrame(report).merge(
-        gdf.groupby("assessment_id")["area_ok"].mean().rename("share_area_ok"), on="assessment_id", how="left"
-    )
-    rep.to_csv(C.OUT_DIR / "join_report.csv", index=False)
-    print(
-        f"\nJoined {len(gdf):,} basins across {gdf.assessment_id.nunique()} assessments; "
-        f"{int((~gdf.area_ok).sum())} fail the area check"
-    )
+    counts = gdf.groupby(["assessment_id", "mask_source"]).size().unstack(fill_value=0)
+    report = report.merge(counts.reset_index(), on="assessment_id", how="left").fillna(0)
+    report.to_csv(C.OUT_DIR / "join_report.csv", index=False)
+
+    rows = inv.merge(gdf[["segment_id", "mask_source"]], on="segment_id", how="left")
+    by = rows.groupby("mask_source", dropna=False)["response"].agg(rows="size", debris_flows="sum")
+    print(f"\nBasins: {len(gdf):,} ({int((gdf.mask_source == 'polygon').sum()):,} polygon, "
+          f"{int((gdf.mask_source == 'proxy').sum()):,} proxy); "
+          f"{int((~poly['area_ok']).sum()) if len(poly) else 0} polygons failed the area check and use a proxy")
+    print(by.to_string())
 
 
 if __name__ == "__main__":

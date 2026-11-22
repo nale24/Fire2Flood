@@ -31,6 +31,21 @@ python src/fire2flood_pipeline/freeze_splits.py
 
 `--from` and `--to` select a range of steps (`clean`, `download`, `join`, `scenes`, `chips`). `freeze_splits.py` refuses to overwrite an existing `splits.json` unless `--overwrite` is passed.
 
+## Models
+
+| Script | Arm | Output (in `reports/results/`) |
+|---|---|---|
+| `baseline_a1.py` | A1: logistic regression on PeakI15, HM23, dNBR/1000, KF | `A1_logistic_<cohort>_metrics.csv`, `_predictions.parquet` |
+| `llm_baseline.py --mode fewshot` | GPT-2 few-shot prompting, yes/no log-odds, Platt-calibrated on training rows | `GPT2_fewshot_<cohort>_*` and the prompts used |
+| `llm_baseline.py --mode embed` | GPT-2 mean-pooled embeddings + PCA + logistic regression | `GPT2_embed_<cohort>_*` |
+| `llm_baseline.py --mode probe` | Memorization probe: score shift when fire name and date are added | `GPT2_memorization_probe_<cohort>.csv` |
+| `baseline_a1.py --model gbm` | A1b: gradient boosting on the same four predictors | `A1b_gbm_<cohort>_*` |
+| `prithvi_features.py` | Frozen Prithvi-EO-2.0-300M features, basin and context pooling | `data/processed/prithvi/<fire>.npz` |
+| `model_a4.py` | A4: four predictors + PCA of Prithvi features (requires `reports/protocol.md`) | `A4_<head>_<pooling>_image_*` |
+| `compare_arms.py` | Paired comparison of all arms vs A1 on identical rows | `comparison_<cohort>.csv` |
+
+All arms share `evaluation.py`: folds come from `data/processed/splits.json` when it exists (otherwise provisional fire-grouped folds), and hyperparameters are tuned by inner fire-grouped CV on log-loss, and metrics are average precision, Brier score and threat score with fire-cluster bootstrap 95% intervals, with and without the Thomas fire. `--cohort` selects `tabular`, `image_candidate` (default) or `image`.
+
 ## Test
 
 ```

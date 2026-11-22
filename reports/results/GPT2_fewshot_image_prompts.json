@@ -1,0 +1,72 @@
+[
+  {
+    "fold": 0,
+    "prefix": "Each record describes a rainstorm over a recently burned watershed in the western United States and whether a debris flow occurred.\n\nPeak 15-minute rainfall intensity: 5 mm/h. Steep, moderately-to-severely burned share of the watershed: 13%. Average burn severity (dNBR): 497. Soil erodibility factor: 0.19.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 4 mm/h. Steep, moderately-to-severely burned share of the watershed: 29%. Average burn severity (dNBR): 366. Soil erodibility factor: 0.19.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 64 mm/h. Steep, moderately-to-severely burned share of the watershed: 1%. Average burn severity (dNBR): 188. Soil erodibility factor: 0.19.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 86 mm/h. Steep, moderately-to-severely burned share of the watershed: 67%. Average burn severity (dNBR): 541. Soil erodibility factor: 0.20.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 30 mm/h. Steep, moderately-to-severely burned share of the watershed: 47%. Average burn severity (dNBR): 457. Soil erodibility factor: 0.29.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 17 mm/h. Steep, moderately-to-severely burned share of the watershed: 60%. Average burn severity (dNBR): 585. Soil erodibility factor: 0.15.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 28 mm/h. Steep, moderately-to-severely burned share of the watershed: 0%. Average burn severity (dNBR): 59. Soil erodibility factor: 0.31.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 46 mm/h. Steep, moderately-to-severely burned share of the watershed: 29%. Average burn severity (dNBR): 293. Soil erodibility factor: 0.29.\nDebris flow: no\n\n",
+    "example_row_ids": [
+      3279,
+      3580,
+      3159,
+      5023,
+      5410,
+      1375,
+      5622,
+      1351
+    ]
+  },
+  {
+    "fold": 1,
+    "prefix": "Each record describes a rainstorm over a recently burned watershed in the western United States and whether a debris flow occurred.\n\nPeak 15-minute rainfall intensity: 40 mm/h. Steep, moderately-to-severely burned share of the watershed: 58%. Average burn severity (dNBR): 609. Soil erodibility factor: 0.30.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 8 mm/h. Steep, moderately-to-severely burned share of the watershed: 49%. Average burn severity (dNBR): 640. Soil erodibility factor: 0.27.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 2 mm/h. Steep, moderately-to-severely burned share of the watershed: 32%. Average burn severity (dNBR): 286. Soil erodibility factor: 0.28.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 34 mm/h. Steep, moderately-to-severely burned share of the watershed: 33%. Average burn severity (dNBR): 402. Soil erodibility factor: 0.15.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 105 mm/h. Steep, moderately-to-severely burned share of the watershed: 64%. Average burn severity (dNBR): 476. Soil erodibility factor: 0.14.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 40 mm/h. Steep, moderately-to-severely burned share of the watershed: 96%. Average burn severity (dNBR): 466. Soil erodibility factor: 0.21.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 9 mm/h. Steep, moderately-to-severely burned share of the watershed: 18%. Average burn severity (dNBR): 272. Soil erodibility factor: 0.29.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 19 mm/h. Steep, moderately-to-severely burned share of the watershed: 34%. Average burn severity (dNBR): 553. Soil erodibility factor: 0.22.\nDebris flow: no\n\n",
+    "example_row_ids": [
+      5775,
+      2846,
+      309,
+      1116,
+      5196,
+      1709,
+      3094,
+      1019
+    ]
+  },
+  {
+    "fold": 2,
+    "prefix": "Each record describes a rainstorm over a recently burned watershed in the western United States and whether a debris flow occurred.\n\nPeak 15-minute rainfall intensity: 109 mm/h. Steep, moderately-to-severely burned share of the watershed: 10%. Average burn severity (dNBR): 210. Soil erodibility factor: 0.13.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 101 mm/h. Steep, moderately-to-severely burned share of the watershed: 53%. Average burn severity (dNBR): 550. Soil erodibility factor: 0.29.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 2 mm/h. Steep, moderately-to-severely burned share of the watershed: 16%. Average burn severity (dNBR): 320. Soil erodibility factor: 0.21.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 40 mm/h. Steep, moderately-to-severely burned share of the watershed: 11%. Average burn severity (dNBR): 766. Soil erodibility factor: 0.22.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 3 mm/h. Steep, moderately-to-severely burned share of the watershed: 0%. Average burn severity (dNBR): 215. Soil erodibility factor: 0.20.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 37 mm/h. Steep, moderately-to-severely burned share of the watershed: 78%. Average burn severity (dNBR): 592. Soil erodibility factor: 0.31.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 10 mm/h. Steep, moderately-to-severely burned share of the watershed: 56%. Average burn severity (dNBR): 551. Soil erodibility factor: 0.13.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 4 mm/h. Steep, moderately-to-severely burned share of the watershed: 56%. Average burn severity (dNBR): 551. Soil erodibility factor: 0.13.\nDebris flow: no\n\n",
+    "example_row_ids": [
+      5920,
+      5100,
+      1850,
+      1576,
+      4419,
+      5106,
+      4226,
+      4215
+    ]
+  },
+  {
+    "fold": 3,
+    "prefix": "Each record describes a rainstorm over a recently burned watershed in the western United States and whether a debris flow occurred.\n\nPeak 15-minute rainfall intensity: 2 mm/h. Steep, moderately-to-severely burned share of the watershed: 2%. Average burn severity (dNBR): 141. Soil erodibility factor: 0.19.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 2 mm/h. Steep, moderately-to-severely burned share of the watershed: 1%. Average burn severity (dNBR): 188. Soil erodibility factor: 0.19.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 101 mm/h. Steep, moderately-to-severely burned share of the watershed: 63%. Average burn severity (dNBR): 460. Soil erodibility factor: 0.29.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 20 mm/h. Steep, moderately-to-severely burned share of the watershed: 61%. Average burn severity (dNBR): 583. Soil erodibility factor: 0.29.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 30 mm/h. Steep, moderately-to-severely burned share of the watershed: 0%. Average burn severity (dNBR): 282. Soil erodibility factor: 0.29.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 18 mm/h. Steep, moderately-to-severely burned share of the watershed: 1%. Average burn severity (dNBR): 346. Soil erodibility factor: 0.29.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 10 mm/h. Steep, moderately-to-severely burned share of the watershed: 2%. Average burn severity (dNBR): 141. Soil erodibility factor: 0.19.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 16 mm/h. Steep, moderately-to-severely burned share of the watershed: 41%. Average burn severity (dNBR): 332. Soil erodibility factor: 0.28.\nDebris flow: yes\n\n",
+    "example_row_ids": [
+      3441,
+      3190,
+      5062,
+      5236,
+      5334,
+      5246,
+      3391,
+      666
+    ]
+  },
+  {
+    "fold": 4,
+    "prefix": "Each record describes a rainstorm over a recently burned watershed in the western United States and whether a debris flow occurred.\n\nPeak 15-minute rainfall intensity: 3 mm/h. Steep, moderately-to-severely burned share of the watershed: 51%. Average burn severity (dNBR): 565. Soil erodibility factor: 0.27.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 2 mm/h. Steep, moderately-to-severely burned share of the watershed: 19%. Average burn severity (dNBR): 522. Soil erodibility factor: 0.19.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 117 mm/h. Steep, moderately-to-severely burned share of the watershed: 36%. Average burn severity (dNBR): 578. Soil erodibility factor: 0.13.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 20 mm/h. Steep, moderately-to-severely burned share of the watershed: 56%. Average burn severity (dNBR): 465. Soil erodibility factor: 0.14.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 9 mm/h. Steep, moderately-to-severely burned share of the watershed: 15%. Average burn severity (dNBR): 499. Soil erodibility factor: 0.28.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 20 mm/h. Steep, moderately-to-severely burned share of the watershed: 24%. Average burn severity (dNBR): 511. Soil erodibility factor: 0.26.\nDebris flow: yes\n\nPeak 15-minute rainfall intensity: 4 mm/h. Steep, moderately-to-severely burned share of the watershed: 56%. Average burn severity (dNBR): 321. Soil erodibility factor: 0.28.\nDebris flow: no\n\nPeak 15-minute rainfall intensity: 32 mm/h. Steep, moderately-to-severely burned share of the watershed: 96%. Average burn severity (dNBR): 466. Soil erodibility factor: 0.21.\nDebris flow: yes\n\n",
+    "example_row_ids": [
+      2699,
+      3502,
+      4189,
+      1361,
+      463,
+      1227,
+      549,
+      1705
+    ]
+  }
+]
