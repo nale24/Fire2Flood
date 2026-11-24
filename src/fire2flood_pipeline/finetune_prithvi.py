@@ -9,7 +9,8 @@ import config as C
 import prithvi_features as P
 from cut_chips import load_chip_for_prithvi
 from evaluation import assign_folds, best_threshold, fold_splits, load_cohort, prediction_frame, run_label, summarize
-from model_probe import batches, split_validation
+from model_probe import batches, set_linear, split_validation
+from models import logistic_start
 
 PROTOCOL = C.ROOT / "reports" / "protocol_finetune.md"
 BLOCK = re.compile(r"blocks\.(\d+)\.")
@@ -186,9 +187,11 @@ def main(argv=None):
             te_mask = np.isin(np.arange(len(df)), te)
         mu, sd = tab[tr].mean(0), tab[tr].std(0) + 1e-6
         data = (xs, ms, pre_i, post_i, ((tab - mu) / sd).astype(np.float32))
+        start = logistic_start(data[4][tr], y[tr], df["split_group"].values[tr])
         p_te, p_tr = np.zeros(len(te)), np.zeros(len(tr_all))
         for s in range(args.seeds):
             model.load_state_dict(initial)
+            set_linear(model.tab, start)
             seed = C.RANDOM_SEED + 100 * k + s
             vloss, epochs = fit_one(model, data, y, tr, va, seed, args, amp)
             p_te += torch.sigmoid(run_rows(model, data, te, args.batch_size * 2, amp)).cpu().numpy() / args.seeds

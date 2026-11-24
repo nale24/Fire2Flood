@@ -27,3 +27,13 @@ The primary configuration "helps" only if, versus A1 on the same test rows:
 ## Reported regardless of outcome
 AP, Brier score and threat score with intervals; the control; the regional hold-out of the primary configuration;
 training curves (validation log-loss per epoch); total GPU time.
+
+## Addendum, 2026-11-23 (after the first run)
+The first run did not implement the design above. The linear term on the four predictors started from random
+weights instead of the fitted logistic baseline, so training did not start from A1. This was found because the
+frozen control (`--unfreeze 0`), which should do at least as well as A1, scored far below it (AP 0.098 vs 0.348;
+fine-tuned 0.136), and its predictions had a rank correlation of only 0.13 with A1's.
+Fix: in every fold, the linear term now starts from a logistic regression fitted (same search as A1) on that fold's
+training rows, excluding the validation fires. Nothing else changed: same folds, hyperparameters, seeds and success
+rule. The first run's results are kept and reported as a failed implementation, not as evidence about Prithvi.
+The attention probe (`model_probe.py`) had the same flaw and is rerun with the same fix.

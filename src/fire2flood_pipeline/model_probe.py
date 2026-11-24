@@ -5,6 +5,7 @@ import pandas as pd
 
 import config as C
 from evaluation import assign_folds, best_threshold, fold_splits, load_cohort, prediction_frame, run_label, summarize
+from models import logistic_start
 from prithvi_tokens import load_tokens
 
 
@@ -56,12 +57,21 @@ def evaluate(model, data, rows):
         return [(rows[b], *model(*data_slice(data, rows[b]))) for b in batches(len(rows), 512)]
 
 
-def fit_one(data, y, train_rows, val_rows, seed, args):
+def set_linear(layer, start):
+    import torch
+
+    with torch.no_grad():
+        layer.weight.copy_(torch.as_tensor(start[0]).view_as(layer.weight))
+        layer.bias.fill_(float(start[1]))
+
+
+def fit_one(data, y, train_rows, val_rows, seed, args, start):
     import torch
 
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
     model = build_model(n_tab=data[4].shape[1])
+    set_linear(model.tab, start)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     loss_fn, yt = torch.nn.BCEWithLogitsLoss(), torch.from_numpy(y.astype(np.float32))
     best, best_state, bad = np.inf, None, 0
@@ -129,9 +139,10 @@ def main(argv=None):
         mu, sd = tab[tr].mean(0), tab[tr].std(0) + 1e-6
         data = (toks, wmap, df["pre_i"].astype(int).values, df["post_i"].astype(int).values,
                 ((tab - mu) / sd).astype(np.float32))
+        start = logistic_start(data[4][tr], y[tr], df["split_group"].values[tr])
         p_te, p_tr = np.zeros(len(te)), np.zeros(len(tr_all))
         for s in range(args.seeds):
-            model, vloss, epochs = fit_one(data, y, tr, va, C.RANDOM_SEED + 100 * k + s, args)
+            model, vloss, epochs = fit_one(data, y, tr, va, C.RANDOM_SEED + 100 * k + s, args, start)
             p_te += predict_rows(model, data, te) / args.seeds
             p_tr += predict_rows(model, data, tr_all) / args.seeds
             print(f"fold {k} seed {s}: stopped after {epochs} epochs, validation log-loss {vloss:.4f}")

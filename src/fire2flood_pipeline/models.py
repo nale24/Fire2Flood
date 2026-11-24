@@ -46,3 +46,10 @@ def make_search(head, groups, n_tab=None, n_pca=0):
 
 def searcher(head, **kw):
     return partial(make_search, head, **kw)
+
+
+def logistic_start(X, y, groups):
+    s = make_search("logistic", groups).fit(X, y, groups=groups)
+    sc, clf = s.best_estimator_.named_steps["scale"], s.best_estimator_.named_steps["clf"]
+    w = clf.coef_[0] / sc.scale_
+    return w.astype(np.float32), np.float32(clf.intercept_[0] - (w * sc.mean_).sum())
