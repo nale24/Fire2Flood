@@ -167,6 +167,8 @@ def main(argv=None):
     t0 = time.time()
     amp = args.device.startswith("cuda")
     df = load_cohort("image").dropna(subset=["chip_path_pre", "chip_path_post"]).reset_index(drop=True)
+    for col in ("chip_path_pre", "chip_path_post"):
+        df[col] = df[col].str.replace("\\", "/", regex=False)
     folds, status = assign_folds(df, args.holdout)
     xs, ms, pre_i, post_i = load_chips(df, args.device)
     y, tab = df["response"].values, df[C.PREDICTOR_COLS].values.astype(np.float32)
