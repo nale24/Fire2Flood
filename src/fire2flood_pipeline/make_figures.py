@@ -10,14 +10,17 @@ from sklearn.metrics import average_precision_score
 
 import config as C
 from compare_arms import paired_bootstrap
-from evaluation import results_dir, subsets
+from evaluation import bootstrap, point_metrics, results_dir, subsets
 
 SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e6e5e0"
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
 POS, NEG = "#2a78d6", "#e34948"
 NAMES = {"A1_logistic": "A1 logistic (4 predictors)", "A1b_gbm": "A1b gradient boosting",
          "A4_logistic_basin": "A4 + Prithvi, basin pooling", "A4_logistic_context": "A4 + Prithvi, context pooling",
-         "A4_probe_attention": "A4 + Prithvi, attention probe", "FACEBOOK-OPT-1.3B_embed": "OPT-1.3B text embeddings",
+         "A4_probe_attention": "A4 + Prithvi, attention probe",
+         "A4_finetune_last2": "A4 + Prithvi, fine-tuned (last 2 blocks)",
+         "A4_finetune_last0": "A4 + Prithvi, fine-tune control (frozen)",
+         "FACEBOOK-OPT-1.3B_embed": "OPT-1.3B text embeddings",
          "GPT2_embed": "GPT-2 text embeddings", "GPT2_fewshot": "GPT-2 few-shot prompting"}
 FOCUS = ["A1_logistic", "A4_logistic_basin", "FACEBOOK-OPT-1.3B_embed"]
 FIG_DIR = C.ROOT / "reports" / "figures"
@@ -138,6 +141,44 @@ def fig_per_fire(preds, cohort):
     return d
 
 
+def fig_region(preds, df):
+    arms = ["A1_logistic", "A4_logistic_basin", "FACEBOOK-OPT-1.3B_embed"]
+    files = {a: results_dir() / f"{a}_image_region_metrics.csv" for a in arms}
+    if not all(f.exists() for f in files.values()):
+        return None
+    region, inside = "_".join(C.REGION_A), df[C.REGION_COL].isin(C.REGION_A).values
+    rows = []
+    for title, subset, mask in ((f"Tested on {region}", f"test_{region}", inside),
+                                (f"Tested outside {region}", f"test_not_{region}", ~inside)):
+        d = preds["A1_logistic"][mask].reset_index(drop=True)
+        m = point_metrics(d) | bootstrap(d)
+        rows.append(dict(panel=title, model="A1, fire hold-out (trained on all regions)", ap=m["ap"], lo=m["ap_lo"],
+                         hi=m["ap_hi"], base_rate=d["y"].mean()))
+        for arm in arms:
+            r = pd.read_csv(files[arm]).set_index("subset").loc[subset]
+            rows.append(dict(panel=title, model=f"{NAMES[arm].split(' (')[0]}, region hold-out", ap=r["ap"],
+                             lo=r["ap_lo"], hi=r["ap_hi"], base_rate=r["base_rate"]))
+    t = pd.DataFrame(rows)
+    order = t["model"].drop_duplicates().tolist()[::-1]
+    fig, axes = plt.subplots(1, 2, figsize=(10, 3.4), sharey=True)
+    y = np.arange(len(order))
+    for ax, (title, g) in zip(axes, t.groupby("panel", sort=False)):
+        g = g.set_index("model").loc[order]
+        colors = [INK2 if "fire hold-out" in m else SERIES[0] for m in order]
+        ax.axvline(g["base_rate"].iloc[0], color=INK2, lw=1.2, ls="--")
+        ax.hlines(y, g["lo"], g["hi"], color=colors, lw=2)
+        ax.scatter(g["ap"], y, s=60, color=colors, zorder=3)
+        ax.set_yticks(y, order)
+        ax.set_title(title, loc="left")
+        ax.set_xlim(0, max(t["hi"].max(), 0.6) * 1.05)
+    fig.supxlabel("Average precision (95% fire-cluster interval); dashed line = base rate", color=INK2, fontsize=10)
+    fig.suptitle("Training only outside California loses skill on California; the reverse transfers",
+                 x=0.01, ha="left", fontweight="bold")
+    finish(fig, "fig5_regional_transfer", "Gray = A1 trained on all regions (fire hold-out) on the same rows. "
+           "Region hold-out: train on one side, test on the other.", -0.04)
+    return t
+
+
 def fig_funnel():
     raw = pd.read_csv(C.INVENTORY_CSV, low_memory=False)
     inv = pd.read_parquet(C.OUT_DIR / "inventory_clean.parquet")
@@ -195,6 +236,9 @@ def main(argv=None):
     tables["mask_source"] = binned(preds, df.assign(m=(df["mask_source"] == "polygon").astype(int)), "m",
                                    [-0.5, 0.5, 1.5], ["Proxy circle", "USGS polygon"], arms)
     tables["per_fire"] = fig_per_fire(preds, cohort)
+    region = fig_region(preds, df)
+    if region is not None:
+        tables["region"] = region
     out = results_dir() / f"failure_analysis_{cohort}.csv"
     with open(out, "w", newline="") as fh:
         for name, t in tables.items():

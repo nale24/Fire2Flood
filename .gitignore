@@ -15,3 +15,7 @@ venv/
 .env
 .netrc
 _netrc
+
+.dodsrc
+*.tgz
+logs/
